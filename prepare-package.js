@@ -33,14 +33,19 @@ var prepare = module.exports = function (dir, cb) {
     if(n < 0) return
     if(error) return n = -1, cb(err)
     if(--n) return
-    fs.readFile(path.join(dir, package.name + '-' + package.version + '.tgz'),
+    var tarballFile = path.join(dir, package.name + '-' + package.version + '.tgz')
+    fs.readFile(tarballFile,
     function (err, tarball) {
       if(err) return cb(err)
       
       package.readme = readmeSource
       package.readmeFile = readmeFile
       package.dist = {shasum: shasum(tarball)}
-      cb(null, package, tarball)
+
+      fs.unlink(tarballFile, function (err) {
+        if(err) ; //do nothing, failure is acceptable
+        cb(null, package, tarball)
+      })
     })
   }
 }
