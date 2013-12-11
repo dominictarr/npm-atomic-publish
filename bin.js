@@ -12,10 +12,6 @@ npmconf.load(function (err, conf) {
 
 //  conf.set('registry', 'http://localhost:5984/registry')
 
-//  console.log(conf.snapshot)
-//  console.log(new Buffer(conf.get('_auth'), 'base64').toString())
-// return
-
   var client = new Client(conf)
   
   prepare(process.cwd(), function (err, package, tarball) {
