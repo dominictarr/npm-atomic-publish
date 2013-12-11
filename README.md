@@ -2,12 +2,21 @@
 
 publish a module with a single http request.
 
+# note
+
+this is not currently fully working,
+npm uses couchdb update rules that drop out attachments from an update,
+which this depends on. It will successfully work the first time,
+subsequent updates will not have the attachments.
+
+once https://github.com/isaacs/npmjs.org/pull/133  is merged, it will be fully functional.
+
 # how this works.
 
 1. *CHECK_CACHE* check for `~/.npm/{module_name}/.cache.json`,  
-   if it's not present, assume it's a fresh publish, else, goto *PUBLISH*  
+   if it's not present, assume it's a new module and goto *DEFAULTS*, else, goto *PUBLISH*  
 
-2. *DEFAULTS* set up the doc for a fresh publish.
+2. *DEFAULTS* set up the doc for a fresh publish. goto *PUBLISH*
 
 3. *PUBLISH* add the tarball inline to the document,  
    and attempt to push to the registry.  
