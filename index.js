@@ -15,6 +15,8 @@ var mkdirp    = require('mkdirp')
 var readJSON = require('./read-json')
 
 
+var opts = require('optimist').argv
+
 function isSuccess(res) {
   return !(res.statusCode < 200 || res.statusCode >= 300)
 }
@@ -73,10 +75,10 @@ module.exports = function (package, tarball, config, cb) {
   })
 
   function next (data, abortIfFail) {
-    if(data.versions[package.version] && !config.force)
+    if(data.versions[package.version] && !(config.force || opts.force))
       return cb(new Error(package.name + '@' + package.version + ' already exists'))
 
-    var attachments = data._attachments = data._attachments || {}
+    var attachments = data._attachments = {}
 
     attachments[tbName] = {
       content_type: 'application/octet-stream',
@@ -98,7 +100,7 @@ module.exports = function (package, tarball, config, cb) {
     var pkgUrl = url.resolve(config.registry,
       encodeURIComponent(package.name))
 
-    console.error(method, pkgUrl, package.dist.shasum)
+    console.error(method, pkgUrl, data)
 
     request({
       method    : method,
