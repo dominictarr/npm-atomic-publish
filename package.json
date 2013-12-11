@@ -1,0 +1,22 @@
+{
+  "name": "npm-atomic-publish",
+  "description": "",
+  "version": "0.0.0",
+  "homepage": "https://github.com/dominictarr/npm-atomic-publish",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/dominictarr/npm-atomic-publish.git"
+  },
+  "dependencies": {
+    "npmconf": "~0.1.6",
+    "request": "~2.27.0",
+    "npm-registry-client": "~0.2.30",
+    "mkdirp": "~0.3.5"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "set -e; for t in test/*.js; do node $t; done"
+  },
+  "author": "Dominic Tarr <dominic.tarr@gmail.com> (dominictarr.com)",
+  "license": "MIT"
+}
