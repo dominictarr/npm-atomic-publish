@@ -80,7 +80,7 @@ module.exports = function (package, tarball, config, cb) {
     if(data.versions[package.version] && !(config.force || opts.force))
       return cb(new Error(package.name + '@' + package.version + ' already exists'))
 
-    var attachments = data._attachments = {}
+    var attachments = data._attachments = data._attachments || {}
 
     attachments[tbName] = {
       content_type: 'application/octet-stream',
@@ -103,15 +103,24 @@ module.exports = function (package, tarball, config, cb) {
       encodeURIComponent(package.name))
 
     console.error(method, pkgUrl, data)
+    var https = /^https/.test(pkgUrl)
+
+    var headers = {}
+
+    if(config._token)
+      headers.cookie = 'AuthSession='+config._token.AuthSession
+    else
+      headers['WWW-Authenticate'] = 'Basic ' +config._auth
+
 
     request({
       method    : method,
       url       : pkgUrl,
       json      : true,
       body      : data,
-      headers   : {cookie: 'AuthSession='+config._token.AuthSession},
-      ca        : config.ca,
-      strictSSL : true
+      headers   : headers,
+      ca        : https ? config.ca : undefined,
+      strictSSL : https
     },
     function (err, res, json) {
       console.error(res && res.statusCode, pkgUrl, package.dist.shasum)
