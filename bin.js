@@ -9,9 +9,6 @@ var prepare = require('./prepare-package')
 npmconf.load(function (err, conf) {
   if(err) throw err
 
-
-//  conf.set('registry', 'http://localhost:5984/registry')
-
   var client = new Client(conf)
   
   prepare(process.cwd(), function (err, package, tarball) {
