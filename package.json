@@ -1,6 +1,6 @@
 {
   "name": "npm-atomic-publish",
-  "description": "",
+  "description": "publish to npm with a single http request",
   "version": "0.0.0",
   "homepage": "https://github.com/dominictarr/npm-atomic-publish",
   "repository": {
