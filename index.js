@@ -25,6 +25,8 @@ function isSuccess(res) {
 module.exports = function (package, tarball, config, cb) {
 
   function saveDoc (data, cb) {
+    if(!data._rev || !data._etag)
+      return console.error('no _rev or _etag'), cb()
     var dir = path.join(config.cache, data._id)
     mkdirp(dir, function () {
       fs.writeFile(path.join(dir, '.cache.json'), JSON.stringify(data), cb)
@@ -145,11 +147,12 @@ module.exports = function (package, tarball, config, cb) {
         return cb(err, json)
 
       delete data._attachments[tbName].data
-      data._rev = json.rev
+      data._rev = json.rev || res.headers['x-couch-update-newrev']
       data._etag = res.headers.etag
-
+      console.log('VERSIONS', data._rev, data._etag)
       saveDoc(data, function (err) {
         if(err) throw err
+        console.log(res.headers)
         console.log(JSON.stringify(json, null, 2))
       })
     })
