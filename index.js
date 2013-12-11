@@ -148,8 +148,8 @@ module.exports = function (package, tarball, config, cb) {
 
       delete data._attachments[tbName].data
       data._rev = json.rev || res.headers['x-couch-update-newrev']
-      data._etag = res.headers.etag
-      console.log('VERSIONS', data._rev, data._etag)
+      data._etag = res.headers.etag || data._rev
+
       saveDoc(data, function (err) {
         if(err) throw err
         console.log(res.headers)
