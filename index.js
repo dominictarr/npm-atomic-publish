@@ -24,6 +24,13 @@ function isSuccess(res) {
 
 module.exports = function (package, tarball, config, cb) {
 
+  //couchdb uses a md5 digest & length
+  //so we'll calculate that too, so that we can
+  //verify the local cache is the same as
+  //the couch doc.
+  var digest = shasum(tarball, 'md5', 'base64')
+  var tbLength = tarball.length
+
   function saveDoc (data, cb) {
     if(!data._rev || !data._etag)
       return console.error('no _rev or _etag'), cb()
@@ -155,7 +162,13 @@ module.exports = function (package, tarball, config, cb) {
       if(!isSuccess(res))
         return cb(err, json)
 
-      delete data._attachments[tbName].data
+      var attachment = data._attachments[tbName]
+
+      delete attachment.data
+      attachment.digest = 'md5-'+digest
+      attachment.length = tbLength
+      attachment.stub = true
+
       data._rev = json.rev || res.headers['x-couch-update-newrev']
       data._etag = res.headers.etag || data._rev
 
