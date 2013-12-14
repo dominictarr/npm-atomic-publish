@@ -1,8 +1,3 @@
-//FIRST STEP, get atomic posts to couchdb.
-//SECOND STEP, get npm format working.
-
-//request a package, to get the current version.
-
 var fs = require('fs')
 var path = require('path')
 var url = require('url')
@@ -21,7 +16,6 @@ function isSuccess(res) {
   return !(res.statusCode < 200 || res.statusCode >= 300)
 }
 
-
 module.exports = function (package, tarball, config, cb) {
 
   //couchdb uses a md5 digest & length
@@ -39,7 +33,6 @@ module.exports = function (package, tarball, config, cb) {
       fs.writeFile(path.join(dir, '.cache.json'), JSON.stringify(data), cb)
     })
   }
-
 
   function defaults (package) {
     return { _id : package.name
@@ -174,7 +167,6 @@ module.exports = function (package, tarball, config, cb) {
 
       saveDoc(data, function (err) {
         if(err) throw err
-        console.log(res.headers)
         console.log(JSON.stringify(json, null, 2))
       })
     })
