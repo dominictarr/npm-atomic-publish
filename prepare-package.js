@@ -34,8 +34,6 @@ var prepare = module.exports = function (dir, config, cb) {
     if(error) return n = -1, cb(error)
     if(--n) return
 
-    console.log('tarball?', tarball)
-      
     package.readme = readme
     package.readmeFile = readmeFile
     package.dist = {shasum: shasum(tarball)}
