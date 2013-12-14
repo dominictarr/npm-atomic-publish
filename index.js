@@ -150,7 +150,7 @@ module.exports = function (package, tarball, config, cb) {
           if(!isSuccess(res))
             return cb(new Error('get request failed, got:'+res.statusCode + ' ' + res.reason || data && data.reason))
 
-          data._etag = res.etag
+          data._etag = res.headers.etag || data._rev
 
           saveDoc(data, function (err) {
             if(err) return cb(err)
