@@ -1,57 +1,52 @@
-var spawn = require('child_process').spawn
 var fs = require('fs')
 var path = require('path')
-
+var pack = require('npmd-pack')
 var shasum = require('shasum')
+var concat = require('concat-stream')
 
-var readme = require('./readme')
+var getReadme = require('./readme')
 var readJSON = require('./read-json')
 
-var prepare = module.exports = function (dir, cb) {
+var prepare = module.exports = function (dir, config, cb) {
+  if(!cb) cb = config, config = {}
   var n = 3
-  var error, readmeSource, readmeFile, package
-  readme(dir, function (err, src, file) {
+  var error, readme, readmeName, package, tarball
+  getReadme(dir, function (err, _readme, _readmeFile) {
     error = error || err
-    readmeSource = src
-    readmeFile = file
+    readme = _readme
+    readmeFile = _readmeFile
     next()
   })
-  readJSON(path.join(dir, 'package.json'), function (err, pkg) {
+  readJSON(path.join(dir, 'package.json'), function (err, _package) {
     error = error || err
-    package = pkg
+    package = _package
     next()
   })
-  var cp = spawn('npm', ['pack'], {cwd: dir})
-  cp.stdout.pipe(process.stdout)
-  cp.stderr.pipe(process.stderr)
-  cp.on('exit', function (code) {
-    if(code) error = new Error('non-zero exit on npm pack:' + code)
-    next()
-  })
+  pack(dir)
+    .on('error', next)
+    .pipe(concat(function (_tarball) {
+      tarball = _tarball
+      next()
+    }))
 
   function next () {
     if(n < 0) return
-    if(error) return n = -1, cb(err)
+    if(error) return n = -1, cb(error)
     if(--n) return
-    var tarballFile = path.join(dir, package.name + '-' + package.version + '.tgz')
-    fs.readFile(tarballFile,
-    function (err, tarball) {
-      if(err) return cb(err)
-      
-      package.readme = readmeSource
-      package.readmeFile = readmeFile
-      package.dist = {shasum: shasum(tarball)}
 
-      fs.unlink(tarballFile, function (err) {
-        if(err) ; //do nothing, failure is acceptable
-        cb(null, package, tarball)
-      })
-    })
+    console.log('tarball?', tarball)
+      
+    package.readme = readme
+    package.readmeFile = readmeFile
+    package.dist = {shasum: shasum(tarball)}
+
+    cb(null, package, tarball)
   }
 }
 
 if(!module.parent) {
   prepare(process.cwd(), function (err, package, tarball) {
+    if(err) throw err
     console.log(package, shasum(tarball))
   })
 }
