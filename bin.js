@@ -16,7 +16,6 @@ npmconf.load(function (err, conf) {
 
     atomic.call(client, package, tarball, function (err, data) {
       if(err) throw err
-      console.log(data)
     })
   })
 })

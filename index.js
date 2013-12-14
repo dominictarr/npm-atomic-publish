@@ -102,7 +102,7 @@ module.exports = function (package, tarball, config, cb) {
     var pkgUrl = url.resolve(config.registry,
       encodeURIComponent(package.name))
 
-    console.error(method, pkgUrl, data)
+    console.log(method, pkgUrl)
     var https = /^https/.test(pkgUrl)
 
     var headers = {}
