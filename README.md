@@ -2,14 +2,8 @@
 
 publish a module with a single http request.
 
-# note
-
-this is not currently fully working,
-npm uses couchdb update rules that drop out attachments from an update,
-which this depends on. It will successfully work the first time,
-subsequent updates will not have the attachments.
-
-once https://github.com/isaacs/npmjs.org/pull/133  is merged, it will be fully functional.
+in recent npm versions npm also uses an atomic publish,
+pretty much just like this, but not exactly.
 
 # how this works.
 
